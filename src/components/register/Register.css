@@ -1,0 +1,39 @@
+.cc-selector input{
+   margin:100px;padding:0;
+   -webkit-appearance:none;
+      -moz-appearance:none;
+           appearance:none;
+}
+.patient{background-image:url(https://i.imgur.com/dsMczuA.png);}
+.doctor{background-image:url(https://i.imgur.com/c9jSsGf.jpg);}
+.researcher{background-image:url(https://i.imgur.com/00ZpWmM.jpg);}
+
+.cc-selector input:active +.drinkcard-cc{opacity: .9;}
+.cc-selector input:checked +.drinkcard-cc{
+   -webkit-filter: none;
+      -moz-filter: none;
+           filter: none;
+}
+.drinkcard-cc{
+   cursor:pointer;
+   background-size:contain;
+   background-repeat:no-repeat;
+   display:inline-block;
+   width:200px;height:170px;
+   /* -webkit-transition: all 300ms ease-in;
+      -moz-transition: all 300ms ease-in;
+           transition: all 300ms ease-in; */
+   -webkit-filter: brightness(1.2) grayscale(1) opacity(.3);
+      -moz-filter: brightness(1.2) grayscale(1) opacity(.3);
+           filter: brightness(1.2) grayscale(1) opacity(.3);
+}
+.drinkcard-cc:hover{
+   -webkit-filter: brightness(1.2) grayscale(.5) opacity(.9);
+      -moz-filter: brightness(1.2) grayscale(.5) opacity(.9);
+           filter: brightness(1.2) grayscale(.5) opacity(.9);
+}
+
+/* Extras */
+a:visited{color:#888}
+a{color:#444;text-decoration:none;}
+p{margin-bottom:.3em;}
