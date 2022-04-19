@@ -10,10 +10,13 @@ import { useState, useEffect, useCallback } from 'react';
 import Register from './register/Register';
 import Hospitals from '../abis/Hospitals.json';
 import DoctorDashboard from './doctor-view/doctor-dashboard/DoctorDashboard';
-import Patients from './doctor-view/doctor-patientsView/Patients';
+import DoctorPatientsView from './doctor-view/doctor-patientsView/PatientsDoctorView';
 
 const ipfsClient = require('ipfs-http-client')
 const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' }) // leaving out the arguments will default to these values
+var CryptoJS = require("crypto-js/core")
+CryptoJS.AES = require("crypto-js/aes");
+var crypto = require("crypto");
 
 function App(){
   // constructor(props) {
@@ -31,6 +34,7 @@ function App(){
   // }
 
   const [account, setAccount] = useState('');
+  const [accounts, setAccounts] = useState([]);
   const [dstorage, setDstorage] = useState(null);
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -79,6 +83,7 @@ function App(){
 
     // this.setState({ account: accounts[0] })
     setAccount(accounts[0])
+    setAccounts(accounts)
   }
 
   const loadBlockchainData = async () => {
@@ -187,11 +192,30 @@ function App(){
 
     reader.readAsArrayBuffer(file)
     reader.onloadend = () => {
-      // this.setState({
-      //   buffer: Buffer(reader.result),
-      //   type: file.type,
-      //   name: file.name
+      // const web3 = window.web3
+      // const accounts = await web3.eth.getAccounts()
+      
+      // let public_key;
+      // var wordArray = CryptoJS.enc.Utf8.parse(Buffer(reader.result));
+      // var base64 = CryptoJS.enc.Base64.stringify(wordArray);
+      // var ecrytpted = CryptoJS.AES.encrypt(base64, String(public_key))
+      // console.log('encrypted:', ecrytpted);
+
+      // var encrypted = CryptoJS.AES.encrypt("Buffer(reader.result)", String(public_key));
+      // // console.log(encrypted)
+      // var decrypted = CryptoJS.AES.decrypt(encrypted.toString(), String(public_key));
+      // console.log(decrypted.toString(CryptoJS.enc.Utf8));
       // })
+      // .catch((error) => {
+      //   if (error.code === 4001) {
+      //     // EIP-1193 userRejectedRequest error
+      //     console.log("We can't encrypt anything without the key.");
+      //   } else {
+      //     console.error(error);
+      //   }
+      // });
+      
+
       setBuffer(Buffer(reader.result))
       setType(file.type)
       setName(file.name)
@@ -248,7 +272,7 @@ function App(){
             <Route path="/login" exact element={<Login account={account}/>} />
             <Route path="/register" exact element={<Register account={account}/>} />
             <Route path="/doctor-dashboard" exact element={<DoctorDashboard account={account}/>} />
-            <Route path="/patients" exact element={<Patients account={account}/>} />
+            <Route path="/patients" exact element={<DoctorPatientsView account={account}/>} />
           </Routes>
         </BrowserRouter>
         {/* { this.state.loading

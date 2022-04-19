@@ -33,6 +33,7 @@ const Item = styled(Card)(({ theme }) => ({
 
 export default function Navbar(props) {
     const navigate = useNavigate();
+
     return (
         <Box sx={{ display: 'flex' }}>
       <CssBaseline />
