@@ -1,4 +1,4 @@
-pragma solidity  0.8.0;
+pragma solidity  0.8.4;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
@@ -43,28 +43,13 @@ contract DStorage is Ownable, AccessControl {
       address payable uploader
   );
 
-  constructor() public {
-    _registration = new Registration();
-    _setupRole(_registration.PATIENT_ROLE(), msg.sender);
-    _setupRole(_registration.DOCTOR_ROLE(), 0xe2D18E6fffd6B2d36B3C7e2F44E33374c7d92B33);
-    addMember(0xe2D18E6fffd6B2d36B3C7e2F44E33374c7d92B33);
-  }
-
-  function addMember(address _member) public onlyRole(_registration.PATIENT_ROLE())
-   {
-      members[_member] = true;
-   }
-
-  function isDoctor(address _address) public returns (bool)
-  {
-    if(hasRole(_registration.DOCTOR_ROLE(), _address)){
-      return true;
-    }
-    return false;
+  constructor(address registrationA) public {
+    _registration = Registration(registrationA);
+    
   }
 
   // Upload File function
-  function uploadFile(string memory _fileHash, uint _fileSize, string memory _fileType, string memory _fileName, string memory _fileDescription) public onlyRole(_registration.PATIENT_ROLE()) {
+  function uploadFile(string memory _fileHash, uint _fileSize, string memory _fileType, string memory _fileName, string memory _fileDescription) public {
     
     // Make sure the file hash exists
     require(bytes(_fileHash).length > 0);
@@ -89,7 +74,6 @@ contract DStorage is Ownable, AccessControl {
     fileCount++;
 
     files[fileCount] = File(fileCount, _fileHash, _fileSize, _fileType, _fileName, _fileDescription, block.timestamp, payable(msg.sender));
-    addMember(msg.sender);
     // Trigger an event
 
     emit FileUploaded(fileCount, _fileHash, _fileSize, _fileType, _fileName, _fileDescription, block.timestamp, payable(msg.sender));

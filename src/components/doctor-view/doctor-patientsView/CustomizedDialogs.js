@@ -40,7 +40,7 @@ export default function FormDialog(props) {
         const accounts = await web3.eth.getAccounts()
         await patientC.methods.registerAPatientAsDoctor(
           fname, lname, gender, addressLocation,
-        city, country, cnp, address, birthDate
+        city, country, cnp, address, birthDateConverted
         ).send({ from: accounts[0] }).on('transactionHash', (hash) => {
            window.location.reload()
            
@@ -56,6 +56,7 @@ export default function FormDialog(props) {
   const [fname, setFname] = React.useState("");
   const [lname, setLname] = React.useState("");
   const [birthDate, setBirthDate] = React.useState(new Date('2014-08-18T21:11:54'));
+  const [birthDateConverted, setBirthDateConverted] = React.useState(0)
   const [country, setCountry] = React.useState("");
   const [city, setCity] = React.useState("");
   const [gender, setGender] = React.useState("Male");
@@ -66,7 +67,8 @@ export default function FormDialog(props) {
 
   const handleBirthDateChange = (newValue) => {
     let date = (new Date(newValue)).getTime() / 1000;
-    setBirthDate(date);
+    setBirthDate(newValue);
+    setBirthDateConverted(date)
   };
 
   const handleLastNameChange = (newValue) => {
@@ -114,7 +116,7 @@ export default function FormDialog(props) {
 
   return (
     <div>
-      <Button variant="contained" onClick={handleClickOpen} sx={{textTransform: 'none'}}>
+      <Button variant="contained" onClick={handleClickOpen} sx={{textTransform: 'none', mt: 1.5, ml: props.open ? 3:9}}>
         Add Patient
       </Button>
       <Dialog open={open} onClose={handleClose}>

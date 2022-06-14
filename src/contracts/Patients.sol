@@ -1,14 +1,16 @@
-pragma solidity 0.8.0;
+pragma solidity 0.8.4;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./Registration.sol";
 import "./DStorage.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract Patients is Ownable, AccessControl{
+
+contract Patients is Ownable, AccessControl, ReentrancyGuard {
 
     Registration _registration;
-    DStorage _dstorage;
 
     struct File {
       string fileHash;
@@ -39,8 +41,8 @@ contract Patients is Ownable, AccessControl{
         uint hospitalId;
     }
 
-    constructor() public {
-        _registration = new Registration();
+    constructor(address registrationA) public {
+        _registration = Registration(registrationA);
     }
 
     struct Patient {
@@ -53,6 +55,7 @@ contract Patients is Ownable, AccessControl{
         address _address;
         string CNP;
         uint birthDate;
+        string _hash;
     }
 
     event AddPatient(
@@ -64,7 +67,8 @@ contract Patients is Ownable, AccessControl{
       string _addressLocation,
       address _address,
       string CNP,
-      uint birthDate
+      uint birthDate,
+      string _hash
   );
     
     mapping(address => File[]) medical_records;
@@ -75,22 +79,54 @@ contract Patients is Ownable, AccessControl{
     mapping(address => mapping(address => File[])) patient_files;
 
     mapping(address => Patient) patients;
+    address[] public patientAccounts;
+
     mapping(address => mapping(address => bool)) history_approved;
+
+    mapping(address => uint[]) files;
+
+    function addFileNft(uint _tokenId, address _to) public{
+        files[_to].push(_tokenId);
+    }
+
+    function transferFileDoctor(IERC721 _nft, address _doctor, uint _tokenId) external {
+        _nft.transferFrom(msg.sender, address(this), _tokenId);
+        _nft.transferFrom(address(this), _doctor, _tokenId);
+    }
+
+    function getFilesForUser(address _address) public returns(uint[] memory)
+    {
+        return files[_address];
+    }
 
     function giveHistoryPermission(address _address) public{
         history_approved[msg.sender][_address] = true;
     }
 
     function registerAPatientAsDoctor(string memory fname, string memory lname, string memory gender, string memory addressLocation,
-        string memory city, string memory country, string memory cnp, address _address, uint birthDate) public{
+        string memory city, string memory country, string memory cnp, address _address, uint birthDate, string memory _hash) public{
         
-        patients[_address] = Patient(fname, lname, country, city, gender, addressLocation, _address, cnp, birthDate);
+        patients[_address] = Patient(fname, lname, country, city, gender, addressLocation, _address, cnp, birthDate, _hash);
         patientsOfDoctor[msg.sender].push(patients[_address]);
         doctors[_address][msg.sender] = true;
         
-        _setupRole(_registration.PATIENT_ROLE(), _address);
+        // _setupRole(_registration.PATIENT_ROLE(), _address);
+        // _registration.addUser(_address);
 
-        emit AddPatient(fname, lname, country, city, gender, addressLocation, _address, cnp, birthDate);
+        emit AddPatient(fname, lname, country, city, gender, addressLocation, _address, cnp, birthDate, _hash);
+    } 
+
+    function registerPatient(string memory fname, string memory lname, string memory gender, string memory addressLocation,
+        string memory city, string memory country, string memory cnp, uint birthDate, string memory _hash) public{
+        
+       
+        patients[msg.sender] = Patient(fname, lname, country, city, gender, addressLocation, msg.sender, cnp, birthDate, _hash);
+        patientAccounts.push(msg.sender);
+        // _setupRole(_registration.PATIENT_ROLE(), 0x681536517EEd5a1622485bf61119F27F477A871f);
+        // _registration.addUser(tx.origin);
+
+        emit AddPatient(fname, lname, country, city, gender, addressLocation, msg.sender, cnp, birthDate, _hash);
+
     } 
 
     function getPatientFiles(address _address) view public returns(File[] memory){
@@ -139,5 +175,17 @@ contract Patients is Ownable, AccessControl{
 
     function getPatientsOfDoctor(address _address) view public returns(Patient[] memory){
         return patientsOfDoctor[_address];
+    }
+
+    function returnPatientFile() view public returns(string memory){
+        return patients[msg.sender]._hash;
+    }
+
+    function getPatient(address _address) view public returns(Patient memory){
+        return patients[_address];
+    }
+
+    function getPatientsAccount() view public returns(address[] memory){
+        return patientAccounts;
     }
 }

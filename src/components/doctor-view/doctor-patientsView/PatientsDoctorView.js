@@ -71,12 +71,7 @@ export default function DoctorPatientsView(props) {
     const [patients, setPatients] = React.useState([])
     const [searched, setSearched] = React.useState("")
 
-    const requestSearch = (searchedVal: string) => {
-        const filteredRows = originalRows.filter((row) => {
-          return row.name.toLowerCase().includes(searchedVal.toLowerCase());
-        });
-        setRows(filteredRows);
-      };
+  
     
     const cancelSearch = () => {
     setSearched("");
@@ -137,26 +132,22 @@ export default function DoctorPatientsView(props) {
         
     ]
 
-    const handleSearch = (value) => {
-        const filteredRows = patients.filter((patient) => {
-            console.log(patient.fname.toLowerCase().includes(value.toLowerCase()));
-        }
-        )
-    };
-
     return (
         <div>
         <Navbar account={props.account} currentPage="Patients"/>
         
         <Box
             component="main"
-            sx={{ flexGrow: 1, bgcolor: '#fafafa', p: 1, paddingTop:6, paddingLeft: 26, width: { sm: `calc(100% - ${drawerWidth - 210}px)`} }}
+            sx={{ flexGrow: 1, bgcolor: 'white', p: 1, paddingTop:6, paddingLeft: 26, width: { sm: `calc(100% - ${drawerWidth - 210}px)`} }}
         > 
-        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-            <SearchBar placeholder="Search by name"
-                    onChange={(event) => handleSearch(event.target.value)}
-                    searchBarWidth='720px'></SearchBar>
-            <TableContainer sx={{ maxHeight: 430}}>
+        <Paper sx={{ width: '30%', overflow: 'hidden' }}>
+        <SearchBar placeholder="Search"
+                    onChange={(event) => setSearched(event.target.value)}
+                    searchBarWidth='300px'></SearchBar>
+        </Paper>
+        <Paper sx={{ width: '100%', overflow: 'hidden', marginTop: "5px" }}>
+            
+            <TableContainer sx={{ maxHeight: 430, top: "10px"}}>
                 <Table stickyHeader aria-label="sticky table">
                 <TableHead>
                     <TableRow>
@@ -175,7 +166,15 @@ export default function DoctorPatientsView(props) {
                     </TableRow>        
                 </TableHead>
                 <TableBody>
-                    {patients
+                    {patients.filter((val) => {
+                        if (searched == ""){
+                            return val
+                        }
+                        else if (val.firstName.toLowerCase().includes(searched.toLowerCase()))
+                        {
+                            return val
+                        }
+                    })
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
                         return (
