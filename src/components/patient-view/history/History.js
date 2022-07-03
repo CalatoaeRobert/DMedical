@@ -23,7 +23,6 @@ import Web3 from 'web3';
 import Patients from '../../../abis/Patients.json'
 import ControlledAccordions from './ControlledAccordions';
 import { useState, useEffect, useCallback } from 'react';
-
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
@@ -102,11 +101,6 @@ export default function History(props){
       setOpen(!open);
     };
 
-    useEffect(() => {
-        loadWeb3()
-        loadHistory()
-      }, [])
-    
     const loadWeb3 = async () =>
     {
         if (window.ethereum) {
@@ -120,6 +114,12 @@ export default function History(props){
             window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!')
         }
     }
+
+    useEffect(() => {
+        loadWeb3()
+        loadHistory()
+      }, [])
+    
 
     const loadHistory = async () =>
     {
@@ -137,7 +137,7 @@ export default function History(props){
             const url = `https://ipfs.moralis.io:2053/ipfs/${patientObj['_hash']}`;
             const response = await fetch(url);
             response.json().then((history) => {
-            ethereum
+            window.ethereum
             .request({
             method: 'eth_decrypt',
             params: [history, accounts[0]],
@@ -183,11 +183,6 @@ export default function History(props){
             >
               Patient History
             </Typography>
-            <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>

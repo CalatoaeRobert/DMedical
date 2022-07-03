@@ -12,6 +12,7 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import { useNavigate } from "react-router-dom";
 import Divider from '@mui/material/Divider';
 import PersonIcon from '@mui/icons-material/Person';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export default function MainListItems(props){
   const navigate = useNavigate();
@@ -20,15 +21,15 @@ export default function MainListItems(props){
     <React.Fragment>
     <ListItemButton>
       <ListItemIcon>
-        <DashboardIcon />
+        <FontAwesomeIcon icon="fa-solid fa-hospital-user" size='lg'/>
       </ListItemIcon>
-      <ListItemText primary="Patients" onClick={() => navigate('/researcher/buy-history')}/>
+      <ListItemText primary="Patients" onClick={() => navigate('/researcher/get-history')}/>
     </ListItemButton>
     {/* <Divider /> */}
 
     <ListItemButton>
       <ListItemIcon>
-        <PeopleIcon />
+        <FontAwesomeIcon icon="fa-solid fa-notes-medical" size="lg"/>
       </ListItemIcon>
       <ListItemText primary="Medical History" onClick={() => navigate('/researcher/patients')}/>
     </ListItemButton>

@@ -83,65 +83,65 @@ function ResearchersCards(props){
         }
     }
 
-    const getAppointments = async () => {
-        const web3 = window.web3
-        const networkId = await web3.eth.net.getId()
-        const networkData = Appointments.networks[networkId]
-        const hospitalsData = Hospitals.networks[networkId]
-        let appointmentsList = []
+    // const getAppointments = async () => {
+    //     const web3 = window.web3
+    //     const networkId = await web3.eth.net.getId()
+    //     const networkData = Appointments.networks[networkId]
+    //     const hospitalsData = Hospitals.networks[networkId]
+    //     let appointmentsList = []
 
-        if(networkData) {
-            const appointmentsContract = new web3.eth.Contract(Appointments.abi, networkData.address)
-            const hospitalsContract = new web3.eth.Contract(Hospitals.abi, hospitalsData.address)
+    //     if(networkData) {
+    //         const appointmentsContract = new web3.eth.Contract(Appointments.abi, networkData.address)
+    //         const hospitalsContract = new web3.eth.Contract(Hospitals.abi, hospitalsData.address)
 
-            const accounts = await web3.eth.getAccounts()
-            const appointments = await appointmentsContract.methods.getAppointmentsOfPatient(accounts[0]).call();
-            for (let i = 0; i < appointments.length; i++){
-                const doctor = await hospitalsContract.methods.getDoctor(appointments[i]['doctor']).call()
+    //         const accounts = await web3.eth.getAccounts()
+    //         const appointments = await appointmentsContract.methods.getAppointmentsOfPatient(accounts[0]).call();
+    //         for (let i = 0; i < appointments.length; i++){
+    //             const doctor = await hospitalsContract.methods.getDoctor(appointments[i]['doctor']).call()
 
-                const today = Date.now()
-                const todayConverted = new Date(today)
+    //             const today = Date.now()
+    //             const todayConverted = new Date(today)
 
-                if (appointmentsTime == "Past"){
-                    if ((today > (appointments[i]['date'] * 1000))){
-                        let appointment = {}
-                        console.log(doctor)
-                        appointment.name = doctor['firstName'] + " " + doctor['lastName']
-                        appointment.hospital = doctor['hospital']
-                        appointment.city = doctor['city']
-                        appointment.date = getDate(appointments[i]['date'])
-                        appointment.startingHour = appointments[i]['startingHour']
-                        appointment.doctorProfile = doctor['_profileHash']
-                        appointmentsList.push(appointment)
-                    }
-                }
-                else{
-                    console.log(today)
-                    console.log(appointments[i]['date'])
-                    if ((today < (appointments[i]['date'] * 1000))){
-                        let appointment = {}
-                        console.log(doctor)
-                        appointment.name = doctor['firstName'] + " " + doctor['lastName']
-                        appointment.hospital = doctor['hospital']
-                        appointment.city = doctor['city']
-                        appointment.date = getDate(appointments[i]['date'])
-                        appointment.startingHour = appointments[i]['startingHour']
-                        appointment.doctorProfile = doctor['_profileHash']
-                        appointmentsList.push(appointment)
-                    }
-                }
+    //             if (appointmentsTime == "Past"){
+    //                 if ((today > (appointments[i]['date'] * 1000))){
+    //                     let appointment = {}
+    //                     console.log(doctor)
+    //                     appointment.name = doctor['firstName'] + " " + doctor['lastName']
+    //                     appointment.hospital = doctor['hospital']
+    //                     appointment.city = doctor['city']
+    //                     appointment.date = getDate(appointments[i]['date'])
+    //                     appointment.startingHour = appointments[i]['startingHour']
+    //                     appointment.doctorProfile = doctor['_profileHash']
+    //                     appointmentsList.push(appointment)
+    //                 }
+    //             }
+    //             else{
+    //                 console.log(today)
+    //                 console.log(appointments[i]['date'])
+    //                 if ((today < (appointments[i]['date'] * 1000))){
+    //                     let appointment = {}
+    //                     console.log(doctor)
+    //                     appointment.name = doctor['firstName'] + " " + doctor['lastName']
+    //                     appointment.hospital = doctor['hospital']
+    //                     appointment.city = doctor['city']
+    //                     appointment.date = getDate(appointments[i]['date'])
+    //                     appointment.startingHour = appointments[i]['startingHour']
+    //                     appointment.doctorProfile = doctor['_profileHash']
+    //                     appointmentsList.push(appointment)
+    //                 }
+    //             }
                 
-            }
-            console.log(appointmentsList) 
-            setAppointments(appointmentsList)
-            // for (let i = 0; i < doctors.length; i++)
-            // {
-            // const doctor = await hospitalC.methods.getDoctor(doctors[i]).call();
-            // doctorsList.push(doctor)
-            // }
-        }
-        // setDoctors(doctorsList)
-    }
+    //         }
+    //         console.log(appointmentsList) 
+    //         setAppointments(appointmentsList)
+    //         // for (let i = 0; i < doctors.length; i++)
+    //         // {
+    //         // const doctor = await hospitalC.methods.getDoctor(doctors[i]).call();
+    //         // doctorsList.push(doctor)
+    //         // }
+    //     }
+    //     // setDoctors(doctorsList)
+    // }
 
       const handlePriceChange = (newValue) => {
         console.log(newValue.target.value)

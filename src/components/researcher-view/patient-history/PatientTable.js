@@ -33,7 +33,7 @@ export default function DataGridDemo() {
                 color="primary"
                 size="small"
                 style={{ marginLeft: 16 }}
-                onClick={(e) => {handleSeeHistory(e, params.row)}}
+                
                 onClick={() => navigate({
                   pathname: '/researcher/patient-history',
                     search: `?patient=${params.row['_address']}`,

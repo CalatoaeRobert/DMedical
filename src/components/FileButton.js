@@ -50,17 +50,17 @@ function HomeButton(props) {
         if (props.isRegistered){
           if (props.role == "PATIENT")
           {
-            notify()
+            //notify()
             navigate('/home')
           }
           else if (props.role == "DOCTOR")
           {
-            notify()
+            //notify()
             navigate('/doctor/patients')
           }
           else if (props.role == "ADMIN")
           {
-            notify()
+            //notify()
             navigate('/admin/doctors')
           }
         }

@@ -146,7 +146,7 @@ function Login(props){
             else if (role == "RESEARCHER")
             {
               //notify()
-              navigate('/researcher/buy-history')
+              navigate('/researcher/get-history')
             }
             else {
               navigate('/register')
@@ -176,7 +176,7 @@ function Login(props){
         else if (props.role == "RESEARCHER")
         {
           //notify()
-          navigate('/researcher/buy-history')
+          navigate('/researcher/get-history')
         }
         else{
           navigate('/register')

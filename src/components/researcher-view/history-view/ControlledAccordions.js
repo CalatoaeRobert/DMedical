@@ -53,7 +53,7 @@ export default function ControlledAccordions(props) {
   const loadConditions = () => {
     let conditionsBuilder = []
     try {
-      const json = JSON.parse(props.history);
+      const json = JSON.parse(JSON.parse(props.history));
       for (var keys of Object.keys(json['attributes'])){
         if ((keys.toLowerCase().includes("condition")) && (!keys.includes("employment")) && (!keys.includes("education"))){
           let condition = {}

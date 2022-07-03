@@ -97,7 +97,7 @@ export default function DataGridDemo() {
 
     const { fetch } = useMoralisQuery(
         "Hospitals",
-        (query) => query,
+        (query) => query.limit(1000),
         [],
         { autoFetch: false }
       );
@@ -147,7 +147,7 @@ export default function DataGridDemo() {
       <DataGrid
         rows={hospitals}
         columns={columns}
-        pageSize={10}
+        pageSize={25}
         rowsPerPageOptions={[5, 10, 25]}
         disableSelectionOnClick
         getRowId={(row) => row.name}

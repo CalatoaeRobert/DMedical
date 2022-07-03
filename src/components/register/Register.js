@@ -2,7 +2,6 @@
 import './Register.css';
 import { useState, useEffect, useCallback } from 'react';
 import PatientForm from "./PatientForm/PatientForm";
-import DoctorForm from "./DoctorForm/DoctorForm";
 import ResearcherForm from "./ResearcherForm/ResearcherForm";
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
@@ -235,104 +234,109 @@ function Register(props){
     let first = 0;
     
     const res = await listAll(listRef);
-
-    for (const folderRef of res.prefixes){
-      const subF = await listAll(folderRef)
-      for (const itemRef of subF.items){
-        const path = itemRef.fullPath
-        if (path.includes(ageRange)){
-          first++;
-        }
-        if (first == 1){
-          const pathReference = ref(storage, itemRef.fullPath)
-          const url = await getDownloadURL(pathReference);
-          const response = await axios.get(url);
-
-          response['data']['attributes']['first_name'] = fname
-          response['data']['attributes']['last_name'] = lname
-          response['data']['attributes']['name'] = fname + " " + lname
-
-          response['data']['attributes']['AGE'] = getAge(birthDate)
-          response['data']['attributes']['AGE_MONTHS'] = getMonths(birthDate)
-          response['data']['attributes']['birthdate'] = getTime(birthDate)
-
-          response['data']['attributes']['CNP'] = cnp
-          response['data']['attributes']['address'] = addressLocation
-
-          console.log(response['data'])
-
-          // const file = new Moralis.File("history.json", {
-          //   base64: btoa(unescape(encodeURIComponent(JSON.stringify(response['data'])))),
-          // });
-          // await file.saveIPFS();
-
-          // console.log(file.ipfs(), file.hash())
-
-          // Save file reference to Moralis
-          // const ehr = new Moralis.Object("EHRs");
-          // ehr.set("name", fname + " " + lname);
-          // ehr.set("resume", file);
-          // await ehr.save();
-
-          const web3 = window.web3
-          const networkId = await web3.eth.net.getId()
-          const networkData = Patients.networks[networkId]
-          const filesData = Files.networks[networkId]
-          const registrationData = Registration.networks[networkId]
-          if(networkData) {
-              const patientC = new web3.eth.Contract(Patients.abi, networkData.address)
-              const filesC = new web3.eth.Contract(Files.abi, filesData.address)
-              const registrationC = new web3.eth.Contract(Registration.abi, registrationData.address)
-              
-              const accounts = await web3.eth.getAccounts()
-              
-              let encryptionPublicKey;
-              try {
-                var result = await ethereum.request({
-                  method: 'eth_getEncryptionPublicKey',
-                  params: [accounts[0]], // you must have access to the specified account
-                });
-                console.log(result);
-                encryptionPublicKey = result;
-    
-                const encryptedMessage = ethUtil.bufferToHex(
-                  Buffer.from(
-                    JSON.stringify(
-                      sigUtil.encrypt({
-                        publicKey: encryptionPublicKey,
-                        data: JSON.stringify(response['data']),
-                        version: 'x25519-xsalsa20-poly1305',
-                      })
-                    ),
-                    'utf8'
-                  )
-                );
-                const file = new Moralis.File("history.json", {
-                  base64: btoa(unescape(encodeURIComponent(JSON.stringify(encryptedMessage)))),
-                });
+    if (res.prefixes.length == 0){
+      window.alert('No suitable medical history was found')
+    }
+    else{
+      for (const folderRef of res.prefixes){
+        const subF = await listAll(folderRef)
+        for (const itemRef of subF.items){
+          const path = itemRef.fullPath
+          if (path.includes(ageRange)){
+            first++;
+          }
+          if (first == 1){
+            const pathReference = ref(storage, itemRef.fullPath)
+            const url = await getDownloadURL(pathReference);
+            const response = await axios.get(url);
+            console.log(url)
+  
+            response['data']['attributes']['first_name'] = fname
+            response['data']['attributes']['last_name'] = lname
+            response['data']['attributes']['name'] = fname + " " + lname
+  
+            response['data']['attributes']['AGE'] = getAge(birthDate)
+            response['data']['attributes']['AGE_MONTHS'] = getMonths(birthDate)
+            response['data']['attributes']['birthdate'] = getTime(birthDate)
+  
+            response['data']['attributes']['CNP'] = cnp
+            response['data']['attributes']['address'] = addressLocation
+  
+            console.log(response['data'])
+  
+            // const file = new Moralis.File("history.json", {
+            //   base64: btoa(unescape(encodeURIComponent(JSON.stringify(response['data'])))),
+            // });
+            // await file.saveIPFS();
+  
+            // console.log(file.ipfs(), file.hash())
+  
+            // Save file reference to Moralis
+            // const ehr = new Moralis.Object("EHRs");
+            // ehr.set("name", fname + " " + lname);
+            // ehr.set("resume", file);
+            // await ehr.save();
+  
+            const web3 = window.web3
+            const networkId = await web3.eth.net.getId()
+            const networkData = Patients.networks[networkId]
+            const filesData = Files.networks[networkId]
+            const registrationData = Registration.networks[networkId]
+            if(networkData) {
+                const patientC = new web3.eth.Contract(Patients.abi, networkData.address)
+                const filesC = new web3.eth.Contract(Files.abi, filesData.address)
+                const registrationC = new web3.eth.Contract(Registration.abi, registrationData.address)
                 
-                await file.saveIPFS();
-
-                await patientC.methods.registerPatient(
-                  fname, lname, gender, addressLocation,
-                city, country, cnp, birthDateConverted, file.hash()
-                ).send({ from: accounts[0] }).on('transactionHash', (hash) => {
+                const accounts = await web3.eth.getAccounts()
+                
+                let encryptionPublicKey;
+                try {
+                  var result = await window.ethereum.request({
+                    method: 'eth_getEncryptionPublicKey',
+                    params: [accounts[0]], // you must have access to the specified account
+                  });
+                  console.log(result);
+                  encryptionPublicKey = result;
+      
+                  const encryptedMessage = ethUtil.bufferToHex(
+                    Buffer.from(
+                      JSON.stringify(
+                        sigUtil.encrypt({
+                          publicKey: encryptionPublicKey,
+                          data: JSON.stringify(response['data']),
+                          version: 'x25519-xsalsa20-poly1305',
+                        })
+                      ),
+                      'utf8'
+                    )
+                  );
+                  const file = new Moralis.File("history.json", {
+                    base64: btoa(unescape(encodeURIComponent(JSON.stringify(encryptedMessage)))),
+                  });
                   
-                  }).on('error', (e) =>{
-                    window.alert('Error')
-                  })
-                  // await registrationC.methods.addPatient(props.account).send({ from: accounts[0] }).on('transactionHash', (hash) => {
-                  // })
-                  navigate('/home')
-                } catch (error) {
-                  if (error.code === 4001) {
-                    // EIP-1193 userRejectedRequest error
-                    console.log("We can't encrypt anything without the key.");
-                  } else {
-                    console.error(error);
+                  await file.saveIPFS();
+  
+                  await patientC.methods.registerPatient(
+                    fname, lname, gender, addressLocation,
+                  city, country, cnp, birthDateConverted, file.hash()
+                  ).send({ from: accounts[0] }).on('transactionHash', (hash) => {
+                    
+                    }).on('error', (e) =>{
+                      window.alert('Error')
+                    })
+                    // await registrationC.methods.addPatient(props.account).send({ from: accounts[0] }).on('transactionHash', (hash) => {
+                    // })
+                    navigate('/home')
+                  } catch (error) {
+                    if (error.code === 4001) {
+                      // EIP-1193 userRejectedRequest error
+                      window.alert("We can't store your medical history without the key.");
+                    } else {
+                      console.error(error);
+                    }
                   }
                 }
-              }
+          }
         }
       }
     }

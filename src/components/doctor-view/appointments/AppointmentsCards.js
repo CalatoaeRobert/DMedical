@@ -54,6 +54,11 @@ function AppointmentsCards(props){
           }
     }
 
+    function sameDay(d1, d2) {
+      return d1.getFullYear() === d2.getFullYear() &&
+        d1.getMonth() === d2.getMonth() &&
+        d1.getDate() === d2.getDate();
+    }
 
     const getAppointments = async () => {
         const web3 = window.web3
@@ -77,8 +82,14 @@ function AppointmentsCards(props){
                 const today = Date.now()
                 const todayConverted = new Date(today)
 
+                const date = appointments[i]['date'] * 1000
+                const dateConverted = new Date(date)
+                const myArray = appointments[i]['startingHour'].split(":");
+
                 if (appointmentsTime == "Past"){
-                    if ((today > (appointments[i]['date'] * 1000))){
+                  if (sameDay(todayConverted, dateConverted)){
+                    if (todayConverted.getHours() == parseInt(myArray[0])){
+                      if (todayConverted.getMinutes() > parseInt(myArray[1])){
                         let appointment = {}
                         appointment.name = patient['firstName'] + " " + patient['lastName']
                         appointment.hospital = doctor['hospital']
@@ -86,12 +97,34 @@ function AppointmentsCards(props){
                         appointment.date = getDate(appointments[i]['date'])
                         appointment.startingHour = appointments[i]['startingHour']
                         appointmentsList.push(appointment)
+                      }
                     }
+                    else if (todayConverted.getHours() > parseInt(myArray[0])){
+                      let appointment = {}
+                      appointment.name = patient['firstName'] + " " + patient['lastName']
+                      appointment.hospital = doctor['hospital']
+                      appointment.city = doctor['city']
+                      appointment.date = getDate(appointments[i]['date'])
+                      appointment.startingHour = appointments[i]['startingHour']
+                      appointmentsList.push(appointment)
+                    }
+                  }
+                  else{
+                    if (today > date){
+                      let appointment = {}
+                      appointment.name = patient['firstName'] + " " + patient['lastName']
+                      appointment.hospital = doctor['hospital']
+                      appointment.city = doctor['city']
+                      appointment.date = getDate(appointments[i]['date'])
+                      appointment.startingHour = appointments[i]['startingHour']
+                      appointmentsList.push(appointment)
+                  }
                 }
+              }
                 else{
-                    console.log(today)
-                    console.log(appointments[i]['date'])
-                    if ((today < (appointments[i]['date'] * 1000))){
+                  if (sameDay(todayConverted, dateConverted)){
+                    if (todayConverted.getHours() == parseInt(myArray[0])){
+                      if (todayConverted.getMinutes() > parseInt(myArray[1])){
                         let appointment = {}
                         appointment.name = patient['firstName'] + " " + patient['lastName']
                         appointment.hospital = doctor['hospital']
@@ -99,7 +132,29 @@ function AppointmentsCards(props){
                         appointment.date = getDate(appointments[i]['date'])
                         appointment.startingHour = appointments[i]['startingHour']
                         appointmentsList.push(appointment)
+                      }
                     }
+                    else if (todayConverted.getHours() < parseInt(myArray[0])){
+                      let appointment = {}
+                      appointment.name = patient['firstName'] + " " + patient['lastName']
+                      appointment.hospital = doctor['hospital']
+                      appointment.city = doctor['city']
+                      appointment.date = getDate(appointments[i]['date'])
+                      appointment.startingHour = appointments[i]['startingHour']
+                      appointmentsList.push(appointment)
+                    }
+                  }
+                  else{
+                    if (today < date){
+                      let appointment = {}
+                      appointment.name = patient['firstName'] + " " + patient['lastName']
+                      appointment.hospital = doctor['hospital']
+                      appointment.city = doctor['city']
+                      appointment.date = getDate(appointments[i]['date'])
+                      appointment.startingHour = appointments[i]['startingHour']
+                      appointmentsList.push(appointment)
+                    }
+                  }
                 }
                 
             }

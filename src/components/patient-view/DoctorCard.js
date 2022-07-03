@@ -27,7 +27,7 @@ export default function DoctorCard(props) {
   }
 
   return (
-    <Card sx={{ minWidth: 250 }} key={props.walletAddress}>
+    <Card key={props.walletAddress}>
       <CardMedia
           component="img"
           height="150"
@@ -61,7 +61,7 @@ export default function DoctorCard(props) {
           Skills:
         </Typography>
         <Typography variant="body2">
-          {props.doctor.skills.map((skill) => (
+          {props.doctor.skills.slice(0,2).map((skill) => (
                 <ListItemText key={skill}>
                 {skill}
               </ListItemText>

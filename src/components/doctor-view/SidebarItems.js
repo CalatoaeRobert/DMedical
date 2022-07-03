@@ -11,23 +11,29 @@ import LayersIcon from '@mui/icons-material/Layers';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import { useNavigate } from "react-router-dom";
 import Divider from '@mui/material/Divider';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-export default function MainListItems(){
+export default function MainListItems(props){
   const navigate = useNavigate();
 
   return (
     <React.Fragment>
 
-    <ListItemButton onClick={() => navigate('/doctor-dashboard')}>
-      <ListItemIcon>
-        <ShoppingCartIcon />
-      </ListItemIcon>
-      <ListItemText primary="Dashboard" />
+    <ListItemButton>
+        <ListItemIcon>
+          <FontAwesomeIcon icon="fa-solid fa-user" size="lg"/>
+        </ListItemIcon>
+        <ListItemText disableTypography primary={<a target="_blank"
+            alt=""
+            rel="noopener noreferrer"
+            href={"https://etherscan.io/address/" + props.account}>
+          {props.account.substring(0,6)}...{props.account.substring(38,42)}
+        </a>}/>
     </ListItemButton>
 
     <ListItemButton onClick={() => navigate('/doctor/patients')}>
       <ListItemIcon>
-        <ShoppingCartIcon />
+        <FontAwesomeIcon icon="fa-solid fa-hospital-user" size='lg'/>
       </ListItemIcon>
       <ListItemText primary="Patients" />
     </ListItemButton>
@@ -36,24 +42,16 @@ export default function MainListItems(){
 
     <ListItemButton onClick={() => navigate('/doctor/appointment-history')}>
       <ListItemIcon>
-        <DashboardIcon />
+        <FontAwesomeIcon icon="fa-solid fa-calendar-check" size="lg"/>
       </ListItemIcon>
       <ListItemText primary="Appoitments" />
     </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <PeopleIcon />
-      </ListItemIcon>
-      <ListItemText primary="Calendar" onClick={() => navigate('/admin/hospitals')}/>
-    </ListItemButton>
 
-    <Divider />
-
-    <ListItemButton onClick={() => navigate('/admin/doctors')}>
+    <ListItemButton onClick={() => navigate('/doctor/requests')}>
       <ListItemIcon>
-        <DashboardIcon />
+        <FontAwesomeIcon icon="fa-solid fa-envelope" size="lg"/>
       </ListItemIcon>
-      <ListItemText primary="Invitations" />
+      <ListItemText primary="Pending Requests" />
     </ListItemButton>
     </React.Fragment>
   )

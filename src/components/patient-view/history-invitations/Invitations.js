@@ -228,11 +228,6 @@ function Invitations(props){
             >
               Invitations
             </Typography>
-            <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>
@@ -250,7 +245,7 @@ function Invitations(props){
           </Toolbar>
           <Divider />
           <List component="nav">
-            <MainListItems />
+            <MainListItems account={props.account}/>
             <Divider sx={{ my: 1 }} />
           </List>
         </Drawer>

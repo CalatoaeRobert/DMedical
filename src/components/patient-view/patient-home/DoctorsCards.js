@@ -69,7 +69,7 @@ function DoctorsCards(props){
             >
             {doctors.map((doctor) => (
                 <Grid  key={doctor.walletAddress}  item xs={12} sm={6} md={3}>
-                    <DoctorCard doctor={doctor} profilePic={`https://ipfs.moralis.io:2053/ipfs/${doctor._profileHash}`}/>
+                    <DoctorCard  doctor={doctor} profilePic={`https://ipfs.moralis.io:2053/ipfs/${doctor._profileHash}`}/>
                 </Grid>
             ))}
         </Grid> 

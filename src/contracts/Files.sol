@@ -39,16 +39,8 @@ contract Files is Ownable, AccessControl{
         _registration = Registration(registrationA);
     }
 
-    modifier onlyAdmin {
-      require(keccak256(abi.encodePacked((_registration.getRole(tx.origin)))) == keccak256(abi.encodePacked(("ADMIN"))));
-      _;
-    }
     modifier onlyPatient {
         require(keccak256(abi.encodePacked((_registration.getRole(tx.origin)))) == keccak256(abi.encodePacked(("PATIENT"))));
-        _;
-    }
-    modifier onlyMedicalResearcher {
-        require(keccak256(abi.encodePacked((_registration.getRole(tx.origin)))) == keccak256(abi.encodePacked(("RESEARCHER"))));
         _;
     }
     modifier onlyDoctor {

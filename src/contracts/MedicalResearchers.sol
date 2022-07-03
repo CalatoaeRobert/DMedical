@@ -131,6 +131,10 @@ contract MedicalResearchers is Ownable{
         delete requestsOfAPatient[msg.sender][index];
     }
 
+    function declineRequestFromResearcher(address _address, uint index) public onlyPatient{
+        delete requestsOfAPatient[msg.sender][index];
+    }
+
     function getFilesHistory(address _address) public returns(Files[] memory){
         return historyFiles[_address];
     }

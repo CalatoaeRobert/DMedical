@@ -8,10 +8,78 @@ import Web3 from 'web3';
 import renderCellExpand from '../GridCellExpand';
 import Button from '@mui/material/Button';
 import { useNavigate } from "react-router-dom";
+import Scheduler from "react-mui-scheduler"
 
 export default function DataGridDemo() {
   const [patients, setPatients] = React.useState([])
   const [historiesApproved, setHistoriesApproved] = React.useState([])
+  const [state] = React.useState({
+    options: {
+      transitionMode: "zoom", // or fade
+      startWeekOn: "mon",     // or sun
+      defaultMode: "month",    // or week | day | timeline
+      minWidth: 540,
+      maxWidth: 540,
+      minHeight: 540,
+      maxHeight: 540
+    },
+    toolbarProps: {
+      showSearchBar: true,
+      showSwitchModeButtons: true,
+      showDatePicker: true
+    }
+  })
+
+  const events = [
+    {
+      id: "event-1",
+      label: "Medical consultation",
+      groupLabel: "Dr Shaun Murphy",
+      user: "Dr Shaun Murphy",
+      color: "#f28f6a",
+      startHour: "04:00 AM",
+      endHour: "05:00 AM",
+      date: "2022-05-05",
+      createdAt: new Date(),
+      createdBy: "Kristina Mayer"
+    },
+    {
+      id: "event-2",
+      label: "Medical consultation",
+      groupLabel: "Dr Claire Brown",
+      user: "Dr Claire Brown",
+      color: "#099ce5",
+      startHour: "09:00 AM",
+      endHour: "10:00 AM",
+      date: "2022-05-09",
+      createdAt: new Date(),
+      createdBy: "Kristina Mayer"
+    },
+    {
+      id: "event-3",
+      label: "Medical consultation",
+      groupLabel: "Dr Menlendez Hary",
+      user: "Dr Menlendez Hary",
+      color: "#263686",
+      startHour: "13 PM",
+      endHour: "14 PM",
+      date: "2022-05-10",
+      createdAt: new Date(),
+      createdBy: "Kristina Mayer"
+    },
+    {
+      id: "event-4",
+      label: "Consultation prénatale",
+      groupLabel: "Dr Shaun Murphy",
+      user: "Dr Shaun Murphy",
+      color: "#f28f6a",
+      startHour: "08:00 AM",
+      endHour: "09:00 AM",
+      date: "2022-05-11",
+      createdAt: new Date(),
+      createdBy: "Kristina Mayer"
+    }
+  ]
 
   const navigate = useNavigate();
 
@@ -39,93 +107,6 @@ export default function DataGridDemo() {
     console.log(skillsString)
   
     return skillsString;
-  }
-  
-  const handleGetHistory = async (e, row, buttonName) => {
-  
-    const web3 = window.web3
-    const networkId = await web3.eth.net.getId()
-
-    const networkData = Appointments.networks[networkId]
-    const hospitalData = Hospitals.networks[networkId]
-    const filesData = Files.networks[networkId]
-
-    const accounts = await web3.eth.getAccounts()
-    
-    if(networkData) {
-        const appContract = new web3.eth.Contract(Appointments.abi, networkData.address)
-        const hospitalContract = new web3.eth.Contract(Hospitals.abi, hospitalData.address)
-        const filesContract = new web3.eth.Contract(Files.abi, filesData.address)
-        if (buttonName == "Get History")
-        {
-          await filesContract.methods.addRequestToShareMedicalRecords(row['_address']).send({ from: accounts[0] }).on('transactionHash', (hash) => { 
-          }).on('error', (e) =>{
-            window.alert('Error')
-            // this.setState({loading: false})
-          
-          })
-          
-          const encryptionKey = await hospitalContract.methods.getEncryptionPublicKey(accounts[0]).call()
-          console.log(encryptionKey)
-          if (encryptionKey == ""){
-            let encryptionPublicKey;
-            try {
-              var result = await window.ethereum.request({
-                method: 'eth_getEncryptionPublicKey',
-                params: [accounts[0]], // you must have access to the specified account
-              });
-              console.log(result);
-              encryptionPublicKey = result;
-  
-              await hospitalContract.methods.addEncryptionKey(encryptionPublicKey).send({ from: accounts[0] }).on('transactionHash', (hash) => { 
-                }).on('error', (e) =>{
-                  window.alert('Error')
-                  // this.setState({loading: false})
-                
-                })
-            } catch (error) {
-              if (error.code === 4001) {
-                // EIP-1193 userRejectedRequest error
-                console.log("We can't encrypt anything without the key.");
-              } else {
-                console.error(error);
-              }
-            }
-        }
-        }
-      else
-      {
-        navigate({
-          pathname: '/doctor/patient-history',
-            search: `?patient=${row['_address']}`,
-          })
-      }
-    }
-  }
-  
-  const renderDetailsButton = (params) => {
-    let buttonName = "Get History";
-    if (historiesApproved.includes(params.row["_address"])){
-      buttonName = "See History"
-    }
-    return (
-        <strong>
-            <Button
-                variant="contained"
-                color="primary"
-                size="small"
-                style={{ marginLeft: 16 }}
-                onClick={(e) => {handleGetHistory(e, params.row, buttonName)}}
-                // onClick={() => navigate({
-                //   pathname: '/doctor/patient-history',
-                //     search: `?patient=${params.row['_address']}`,
-                //   })}
-            >
-              
-                {buttonName}
-            </Button>
-        </strong>
-    )
   }
   
   const columns = [
@@ -179,18 +160,12 @@ export default function DataGridDemo() {
       width: 160,
       renderCell: renderCellExpand 
     },
-    {
-      field: 'history',
-      headerName: 'History',
-      width: 150,
-      renderCell: renderDetailsButton 
-    },
   ];
 
   React.useEffect(() => {
     loadWeb3()
     getPatients()
-    loadHistoryApproved()
+    loadRequests()
   }, [])
 
   const loadWeb3 = async () =>
@@ -207,7 +182,7 @@ export default function DataGridDemo() {
           }
     }
 
-  const loadHistoryApproved = async () => {
+  const loadRequests = async () => {
     const web3 = window.web3
     const networkId = await web3.eth.net.getId()
     const networkData = Files.networks[networkId]
@@ -248,16 +223,35 @@ export default function DataGridDemo() {
     setPatients(patientsList)
   }
 
+  const handleCellClick = (event, row, day) => {
+    console.log(row)
+  }
+  
+  const handleEventClick = (event, item) => {
+    console.log(item)
+  }
+  
+  const handleEventsChange = (item) => {
+    // Do something...
+  }
+  
+  const handleAlertCloseButtonClicked = (item) => {
+    // Do something...
+  }
+
   return (
-    <div style={{ height: 450, width: '100%' }}>
-      <DataGrid
-        rows={patients}
-        columns={columns}
-        pageSize={10}
-        rowsPerPageOptions={[5, 10, 25]}
-        disableSelectionOnClick
-        getRowId={(row) => row.CNP}
-      />
+    <div style={{ width: '100%' }}>
+      <Scheduler
+      locale="en"
+      events={events}
+      legacyStyle={false}
+      options={state?.options}
+      toolbarProps={state?.toolbarProps}
+      onEventsChange={handleEventsChange}
+      onCellClick={handleCellClick}
+      onTaskClick={handleEventClick}
+      onAlertCloseButtonClicked={handleAlertCloseButtonClicked}
+    />
     </div>
   );
 }

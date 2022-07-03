@@ -11,16 +11,29 @@ import LayersIcon from '@mui/icons-material/Layers';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import { useNavigate } from "react-router-dom";
 import Divider from '@mui/material/Divider';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-export default function MainListItems(){
+export default function MainListItems(props){
   const navigate = useNavigate();
 
   return (
     <React.Fragment>
 
+    <ListItemButton>
+        <ListItemIcon>
+          <FontAwesomeIcon icon="fa-solid fa-user" size="lg"/>
+        </ListItemIcon>
+        <ListItemText disableTypography primary={<a target="_blank"
+            alt=""
+            rel="noopener noreferrer"
+            href={"https://etherscan.io/address/" + props.account}>
+          {props.account.substring(0,6)}...{props.account.substring(38,42)}
+        </a>}/>
+    </ListItemButton>
+
     <ListItemButton onClick={() => navigate('/admin/patients')}>
       <ListItemIcon>
-        <ShoppingCartIcon />
+      <FontAwesomeIcon icon="fa-solid fa-hospital-user" size='lg'/>
       </ListItemIcon>
       <ListItemText primary="Patients" />
     </ListItemButton>
@@ -29,28 +42,22 @@ export default function MainListItems(){
 
     <ListItemButton onClick={() => navigate('/admin/doctors')}>
       <ListItemIcon>
-        <DashboardIcon />
+        <FontAwesomeIcon icon="fa-solid fa-user-doctor" size="lg"/>
       </ListItemIcon>
       <ListItemText primary="Doctors" />
     </ListItemButton>
     <ListItemButton>
       <ListItemIcon>
-        <PeopleIcon />
+        <FontAwesomeIcon icon="fa-solid fa-hospital" size="lg"/>
       </ListItemIcon>
       <ListItemText primary="Hospitals" onClick={() => navigate('/admin/hospitals')}/>
     </ListItemButton>
 
     <Divider />
 
-    <ListItemButton onClick={() => navigate('/admin/doctors')}>
-      <ListItemIcon>
-        <DashboardIcon />
-      </ListItemIcon>
-      <ListItemText primary="Laboratories" />
-    </ListItemButton>
     <ListItemButton>
       <ListItemIcon>
-        <PeopleIcon />
+        <FontAwesomeIcon icon="fa-solid fa-flask-vial" size="lg"/>
       </ListItemIcon>
       <ListItemText primary="Researchers" onClick={() => navigate('/admin/medical-reseachers')}/>
     </ListItemButton>

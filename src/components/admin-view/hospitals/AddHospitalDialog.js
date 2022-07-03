@@ -203,7 +203,8 @@ export default function FormDialog(props) {
             </MenuItem>
             ))}
             </TextField>
-            <TextField id="outlined-basic" label="Name" variant="outlined" id="name" value={name}
+            <TextField id="outlined-basic" label="Name" variant="outlined" id="name" value={name} error={name === ""}
+        helperText={name === "" ? "Empty!" : " "}
             onChange={handleNameChange}/>
             <TextField id="outlined-basic" label="ZIP" variant="outlined" id="zip" value={zip}
             onChange={handleZipChange}/>

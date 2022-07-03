@@ -148,7 +148,7 @@ export default function HistoryResearcher(props){
             const url = `https://ipfs.moralis.io:2053/ipfs/${hash}`;
             const response = await fetch(url);
             response.json().then((history) => {
-            ethereum
+            window.ethereum
             .request({
             method: 'eth_decrypt',
             params: [history, accounts[0]],
@@ -194,11 +194,6 @@ export default function HistoryResearcher(props){
             >
               Patient History
             </Typography>
-            <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>

@@ -1,29 +1,9 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import MuiDrawer from '@mui/material/Drawer';
-import CssBaseline from '@mui/material/CssBaseline';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import PersonIcon from '@mui/icons-material/Person';
+import InvitationsTable from './InvitationsTable';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import { padding } from '@mui/system';
-import { useNavigate } from "react-router-dom";
-import Navbar from '../navbar/Navbar';
-// import DoctorCard from '../DoctorCard';
-import PatientsCard from './PatientsCards'
-import MedicalResearchers from '../../../abis/MedicalResearchers.json';
-import Patients from '../../../abis/Patients.json';
-import Web3 from 'web3';
-import PatientsCards from './PatientsCards';
+import CssBaseline from '@mui/material/CssBaseline';
+import MuiDrawer from '@mui/material/Drawer';
+import Box from '@mui/material/Box';
 import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
@@ -32,15 +12,15 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
 import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-// import MainListItems from '../SidebarItems';
-import MainListItems from '../SidebarItems'
+import MainListItems from '../SidebarItems';
 import Button from '@mui/material/Button'
-const ethUtil = require('ethereumjs-util');
-const sigUtil = require('@metamask/eth-sig-util');
+
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
@@ -111,51 +91,14 @@ const mdTheme = createTheme({
       },
 });
 
-function PatientHistorySell(props){
+export default function InvitationsComponent(props){
     const [open, setOpen] = React.useState(true);
-
     const toggleDrawer = () => {
       setOpen(!open);
     };
 
-    React.useEffect(() => {
-       loadWeb3()
-       loadFilesContract()
-    }, [props.account])
-
-    const loadWeb3 = async () => {
-        if (window.ethereum) {
-          window.web3 = new Web3(window.ethereum)
-          window.ethereum.enable()
-        }
-        else if (window.web3) {
-          window.web3 = new Web3(window.web3.currentProvider)
-        }
-        else {
-          window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!')
-        }
-    }
-
-    const loadFilesContract = async () => {
-      const web3 = window.web3
-      const networkId = await web3.eth.net.getId()
-      
-      const researcherData = MedicalResearchers.networks[networkId]
-      let patientsList = []
-      let prices = []
-  
-      if(researcherData) {
-         
-          const researcherContract = new web3.eth.Contract(MedicalResearchers.abi, researcherData.address)
-
-          const accounts = await web3.eth.getAccounts()
-
-          const historyFiles = await researcherContract.methods.getFilesHistory(accounts[0]).call()
-          console.log(historyFiles)
-      }
-    }
-    return (
-      <ThemeProvider theme={mdTheme}>
+    return(
+    <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: 'flex', height: "100%" }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>
@@ -183,7 +126,7 @@ function PatientHistorySell(props){
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Get Medical Records
+              Pending Invitations
             </Typography>
           </Toolbar>
         </AppBar>
@@ -204,6 +147,7 @@ function PatientHistorySell(props){
           <List component="nav">
             <MainListItems account={props.account}/>
             <Divider sx={{ my: 1 }} />
+            {/* {secondaryListItems} */}
           </List>
         </Drawer>
         <Box
@@ -219,11 +163,11 @@ function PatientHistorySell(props){
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 2, mb: 1 }}> 
+          <Container maxWidth="lg" sx={{ mt: 1, mb: 1 }}> 
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                        <PatientsCard />
+                        <InvitationsTable />
                     </Paper>
               </Grid>
             </Grid>
@@ -232,6 +176,5 @@ function PatientHistorySell(props){
         </Box>
         </ThemeProvider>
     )
+    
 }
-
-export default PatientHistorySell

@@ -90,23 +90,14 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 const mdTheme = createTheme({
     palette: {
         primary: {
-          // light: will be calculated from palette.primary.main,
           main: '#00897b',
-          // dark: will be calculated from palette.primary.main,
-          // contrastText: will be calculated to contrast with palette.primary.main
         },
         secondary: {
           light: '#891e00',
           main: '#891e00',
-          // dark: will be calculated from palette.secondary.main,
           contrastText: '#e0f2f1',
         },
-        // Used by `getContrastText()` to maximize the contrast between
-        // the background and the text.
         contrastThreshold: 3,
-        // Used by the functions below to shift a color's luminance by approximately
-        // two indexes within its tonal palette.
-        // E.g., shift from Red 500 to Red 300 or Red 700.
         tonalOffset: 0.2,
       },
 });
@@ -159,7 +150,7 @@ function Patient(props){
               const response = await fetch(url);
               response.json().then((historyEncrypted) => {
                 
-                ethereum
+                window.ethereum
                 .request({
                   method: 'eth_decrypt',
                   params: [historyEncrypted, accounts[0]],
@@ -237,11 +228,6 @@ function Patient(props){
             >
               Doctors
             </Typography>
-            <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>
@@ -259,7 +245,7 @@ function Patient(props){
           </Toolbar>
           <Divider />
           <List component="nav">
-            <MainListItems />
+            <MainListItems account={props.account}/>
             <Divider sx={{ my: 1 }} />
           </List>
         </Drawer>
@@ -279,7 +265,7 @@ function Patient(props){
           <Container maxWidth="lg" sx={{ mt: 2, mb: 1 }}> 
             <Grid container spacing={3}>
                 <Grid item xs={12}>
-                    <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+                    <Paper sx={{ paddingTop: 2, paddingBottom: 2, display: 'flex', flexDirection: 'column' }}>
                         <DoctorsCards />
                     </Paper>
               </Grid>

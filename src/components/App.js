@@ -19,7 +19,6 @@ import DoctorDashboard from './doctor-view/doctor-dashboard/DoctorDashboard';
 import Patient from './patient-view/patient-home/Patient';
 import { ethers } from "ethers"
 import Doctors from './admin-view/doctor/Doctors';
-import DoctorForm from './register/DoctorForm/DoctorForm';
 import PatientsComponent from './admin-view/patient/PatientComponent'
 import HospitalsComponent from './admin-view/hospitals/Hospitals';
 import BookAppointment from './patient-view/patient-home/BookAppointment';
@@ -34,6 +33,7 @@ import PatientsHistorySell from './researcher-view/patient-view/PatientsHistoryS
 import PatientResearchers from './patient-view/researchers/PatientResearchers'
 import PatientsOfResearchersComponent from './researcher-view/patient-history/PatientsOfResearchers';
 import HistoryResearcher from './researcher-view/history-view/HistoryResearcher';
+import InvitationsComponent from './doctor-view/invitations/InvitationsComponent';
 
 import Private from './Private'
 
@@ -41,13 +41,30 @@ import { initializeApp } from "firebase/app";
 import { getStorage, ref, listAll, getDownloadURL } from "firebase/storage";
 import { useNavigate } from "react-router-dom";
 
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faNotesMedical, faUserDoctor, faHandshakeAngle, faCalendarCheck, 
+  faFlaskVial, faHospitalUser, faEnvelope, faHospital } from '@fortawesome/free-solid-svg-icons'
+import { faTwitter, faFontAwesome } from '@fortawesome/free-brands-svg-icons'
+
+import { useMoralis } from "react-moralis";
+
+library.add(fas, faUser)
+library.add(fas, faNotesMedical)
+library.add(fas, faUserDoctor)
+library.add(fas, faHandshakeAngle)
+library.add(fas, faCalendarCheck)
+library.add(fas, faFlaskVial)
+library.add(fas, faHospitalUser)
+library.add(fas, faEnvelope)
+library.add(fas, faHospital)
+
 const ipfsClient = require('ipfs-http-client')
 const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' }) // leaving out the arguments will default to these values
 var CryptoJS = require("crypto-js/core")
 CryptoJS.AES = require("crypto-js/aes");
 var crypto = require("crypto");
 
-import { useMoralis } from "react-moralis";
 
 function App(){
 
@@ -88,6 +105,35 @@ function App(){
     loadIsRegistered()
     //  addHospitals()
 }, []);
+
+  // useEffect(() => {
+  //   localStorage.setItem('isPatient', isPatient);
+  // }, [isPatient])
+
+  // useEffect(() => {
+  //   localStorage.setItem('isDoctor', isDoctor);
+  // }, [isDoctor])
+
+  // useEffect(() => {
+  //   localStorage.setItem('isResearcher', isResearcher);
+  // }, [isResearcher])
+
+  // useEffect(() => {
+  //   localStorage.setItem('isAdmin', isAdmin);
+  // }, [isAdmin])
+
+  // useEffect(() => {
+  //     localStorage.setItem('isPatient', isPatient);
+  //     localStorage.setItem('isDoctor', isDoctor);
+  //     localStorage.setItem('isResearcher', isResearcher);
+  //     localStorage.setItem('isAdmin', isAdmin);
+  // }, [isPatient, isDoctor, isResearcher, isAdmin])
+
+// useEffect(() => {
+//   window.process = {
+//     ...window.process,
+//   };
+// }, []);
 
   const loadAccount = async () => {
     const web3 = window.web3
@@ -262,33 +308,50 @@ function App(){
       const registrationContract = new web3.eth.Contract(Registration.abi, networkData.address)
 
       const isRegistered = await registrationContract.methods.userExists(accounts[0]).call()
-      setIsRegistered(true)
-
+      setIsRegistered(isRegistered)
+      
       const role = await registrationContract.methods.getRole(accounts[0]).call()
+      console.log(role)
       if (role == "PATIENT"){
-        setIsPatient(true)
-        setIsDoctor(false)
-        setIsAdmin(false)
-        setIsResearcher(false)
+        localStorage.setItem('isPatient', true);
+        localStorage.setItem('isDoctor', false);
+        localStorage.setItem('isAdmin', false);
+        localStorage.setItem('isResearcher', false);
+        // setIsDoctor(false)
+        // setIsAdmin(false)
+        // setIsResearcher(false)
       }
       else if(role == "DOCTOR"){
-        setIsDoctor(true)
-        setIsAdmin(false)
-        setIsResearcher(false)
-        setIsPatient(false)
+        localStorage.setItem('isPatient', false);
+        localStorage.setItem('isDoctor', true);
+        localStorage.setItem('isAdmin', false);
+        localStorage.setItem('isResearcher', false);
+        // setIsDoctor(true)
+        // setIsAdmin(false)
+        // setIsResearcher(false)
+        // setIsPatient(false)
       }
       else if(role == "ADMIN"){
-        setIsAdmin(true)
-        setIsResearcher(false)
-        setIsPatient(false)
-        setIsDoctor(false)
+        // setIsAdmin(true)
+        // setIsResearcher(false)
+        // setIsPatient(false)
+        // setIsDoctor(false)
+        localStorage.setItem('isPatient', false);
+        localStorage.setItem('isDoctor', false);
+        localStorage.setItem('isAdmin', true);
+        localStorage.setItem('isResearcher', false);
       }
-      else if(role == "RESEARCHER_ROLE"){
-        setIsResearcher(true)
-        setIsPatient(false)
-        setIsDoctor(false)
-        setIsAdmin(false)
+      else if(role == "RESEARCHER"){
+        // setIsResearcher(true)
+        // setIsPatient(false)
+        // setIsDoctor(false)
+        // setIsAdmin(false)
+        localStorage.setItem('isPatient', false);
+        localStorage.setItem('isDoctor', false);
+        localStorage.setItem('isAdmin', false);
+        localStorage.setItem('isResearcher', true);
       }
+      
     }
   }
 
@@ -300,26 +363,95 @@ function App(){
             <Route path="/login" exact element={<Login account={account}/>} />
             <Route path="/register" exact element={<Register account={account}/>} />
             <Route path="/doctor-dashboard" exact element={
-                  <Private auth={isRegistered}>
+                  <Private isCorrectRole={'isDoctor'}>
                   <DoctorDashboard account={account}/>
                 </Private>
             } />
-            <Route path="/home" exact element={<Patient account={account}/>} />
-            <Route path="/admin/doctors" exact element={<Doctors account={account}/>} />
-            <Route path="/admin/patients" exact element={<PatientsComponent account={account}/>} />
-            <Route path="/admin/hospitals" exact element={<HospitalsComponent account={account}/>} />
-            <Route path="/book-appointment" element={<BookAppointment account={account}/>} />
-            <Route path="/doctor/patients" element={<PatientsOfDoctorComponent account={account}/>} />
-            <Route path="/patient/invitations" element={<Invitations account={account}/>} />
-            <Route path='/doctor/patient-history' element={<HistoryPatient account={account}/>} />
-            <Route path='/my-history' element={<History account={account}/>} />
-            <Route path='/appointment-history' element={<AppointmentsHistory account={account}/>} />
-            <Route path='/doctor/appointment-history' element={<DoctorAppointments account={account}/>} />
-            <Route path='/admin/medical-reseachers' element={<MedicalResearchers account={account}/>} />
-            <Route path='/researcher/buy-history' element={<PatientsHistorySell account={account}/>} />
-            <Route path='/researchers' element={<PatientResearchers account={account}/>} />
-            <Route path='/researcher/patients' element={<PatientsOfResearchersComponent account={account}/>} />
-            <Route path='/researcher/patient-history' element={<HistoryResearcher account={account}/>} />
+            <Route path="/home" exact element={
+                  <Private isCorrectRole={'isPatient'}>
+                  <Patient account={account}/>
+                </Private>
+            } />
+            <Route path="/admin/doctors" exact element={
+                  <Private isCorrectRole={'isAdmin'}>
+                  <Doctors account={account}/>
+                </Private>
+            } />
+            <Route path="/admin/patients" exact element={
+                  <Private isCorrectRole={'isAdmin'}>
+                  <PatientsComponent account={account}/>
+                </Private>
+            } />
+            <Route path="/admin/hospitals" exact element={
+                  <Private isCorrectRole={'isAdmin'}>
+                  <HospitalsComponent account={account}/>
+                </Private>
+            } />
+            <Route path="/book-appointment" element={
+                  <Private isCorrectRole={'isPatient'}>
+                  <BookAppointment account={account}/>
+                </Private>
+            } />
+            <Route path="/doctor/patients" element={
+                  <Private isCorrectRole={'isDoctor'}>
+                  <PatientsOfDoctorComponent account={account}/>
+                </Private>
+            } />
+            <Route path="/patient/invitations" element={
+                  <Private isCorrectRole={'isPatient'}>
+                  <Invitations account={account}/>
+                </Private>
+            } />
+            <Route path='/doctor/patient-history' element={
+                  <Private isCorrectRole={'isDoctor'}>
+                  <HistoryPatient account={account}/>
+                </Private>
+            } />
+            <Route path='/my-history' element={
+                  <Private isCorrectRole={'isPatient'}>
+                  <History account={account}/>
+                </Private>
+            } />
+            <Route path='/appointment-history' element={
+                  <Private isCorrectRole={'isPatient'}>
+                  <AppointmentsHistory account={account}/>
+                </Private>
+            } />
+            <Route path='/doctor/appointment-history' element={
+                  <Private isCorrectRole={'isDoctor'}>
+                  <DoctorAppointments account={account}/>
+                </Private>
+            } />
+            <Route path='/admin/medical-reseachers' element={
+                  <Private isCorrectRole={'isAdmin'}>
+                  <MedicalResearchers account={account}/>
+                </Private>
+            } />
+            <Route path='/researcher/get-history' element={
+                  <Private isCorrectRole={'isResearcher'}>
+                  <PatientsHistorySell account={account}/>
+                </Private>
+            } />
+            <Route path='/researchers' element={
+                  <Private isCorrectRole={'isPatient'}>
+                  <PatientResearchers account={account}/>
+                </Private>
+            } />
+            <Route path='/researcher/patients' element={
+                  <Private isCorrectRole={'isResearcher'}>
+                  <PatientsOfResearchersComponent account={account}/>
+                </Private>
+            } />
+            <Route path='/researcher/patient-history' element={
+                  <Private isCorrectRole={'isResearcher'}>
+                  <HistoryResearcher account={account}/>
+                </Private>
+            } />
+            <Route path='/doctor/requests' element={
+                  <Private isCorrectRole={'isDoctor'}>
+                  <InvitationsComponent account={account}/>
+                </Private>
+            } />
           </Routes>
       </div>
     );

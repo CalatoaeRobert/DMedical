@@ -22,7 +22,7 @@ export default function MainListItems(props){
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
-      <ListItemText primary="Patients" onClick={() => navigate('/researcher/buy-history')}/>
+      <ListItemText primary="Patients" onClick={() => navigate('/researcher/get-history')}/>
     </ListItemButton>
     {/* <Divider /> */}
 

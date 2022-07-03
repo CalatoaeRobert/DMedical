@@ -61,7 +61,7 @@ export default function PatientCard(props) {
             const researcher = await researcherContract.methods.getResearcher(accounts[0]).call()
             const nrOfPatients = researcher['nrOfPatients']
             if (nrOfPatients == 0){
-              var result = await ethereum.request({
+              var result = await window.ethereum.request({
                 method: 'eth_getEncryptionPublicKey',
                 params: [accounts[0]], // you must have access to the specified account
               });

@@ -73,7 +73,7 @@ export default function InvitationsTable() {
             const response = await fetch(url);
             response.json().then((historyEncrypted) => {
               
-              ethereum
+              window.ethereum
               .request({
                 method: 'eth_decrypt',
                 params: [historyEncrypted, accounts[0]],
@@ -126,7 +126,7 @@ export default function InvitationsTable() {
             const response = await fetch(url);
             response.json().then((historyEncrypted) => {
               
-              ethereum
+              window.ethereum
               .request({
                 method: 'eth_decrypt',
                 params: [historyEncrypted, accounts[0]],
