@@ -40,57 +40,6 @@ export default function DataGridDemo() {
     }
   })
 
-  // const events = [
-  //   {
-  //     id: "event-1",
-  //     label: "Medical consultation",
-  //     groupLabel: "Dr Shaun Murphy",
-  //     user: "Dr Shaun Murphy",
-  //     color: "#f28f6a",
-  //     startHour: "04:00 AM",
-  //     endHour: "05:00 AM",
-  //     date: "2022-05-05",
-  //     createdAt: new Date(),
-  //     createdBy: "Kristina Mayer"
-  //   },
-  //   {
-  //     id: "event-2",
-  //     label: "Medical consultation",
-  //     groupLabel: "Dr Claire Brown",
-  //     user: "Dr Claire Brown",
-  //     color: "#099ce5",
-  //     startHour: "09:00 AM",
-  //     endHour: "10:00 AM",
-  //     date: "2022-05-09",
-  //     createdAt: new Date(),
-  //     createdBy: "Kristina Mayer"
-  //   },
-  //   {
-  //     id: "event-3",
-  //     label: "Medical consultation",
-  //     groupLabel: "Dr Menlendez Hary",
-  //     user: "Dr Menlendez Hary",
-  //     color: "#263686",
-  //     startHour: "13 PM",
-  //     endHour: "14 PM",
-  //     date: "2022-05-10",
-  //     createdAt: new Date(),
-  //     createdBy: "Kristina Mayer"
-  //   },
-  //   {
-  //     id: "event-4",
-  //     label: "Consultation prénatale",
-  //     groupLabel: "Dr Shaun Murphy",
-  //     user: "Dr Shaun Murphy",
-  //     color: "#f28f6a",
-  //     startHour: "08:00 AM",
-  //     endHour: "09:00 AM",
-  //     date: "2022-05-11",
-  //     createdAt: new Date(),
-  //     createdBy: "Kristina Mayer"
-  //   }
-  // ]
-
   const navigate = useNavigate();
 
   function getBirthDate(params) {
@@ -101,80 +50,9 @@ export default function DataGridDemo() {
     let value = dd + '/' + mm + '/' + yyyy;
     return value;
   }
-  
-  function getSkills(params) {
-    let skillsString = ""
-    console.log(params.row.skills)
-    for (let i = 0; i < params.row.skills.length; i++)
-    {
-      console.log(params.row.skills[i])
-      skillsString += params.row.skills[i] + ", "
-      if (i == (params.row.skills.length - 1))
-      {
-        skillsString += params.row.skills[i]
-      }
-    }
-    console.log(skillsString)
-  
-    return skillsString;
-  }
-  
-  // const columns = [
-  //   {
-  //     field: 'firstName',
-  //     headerName: 'First name',
-  //     width: 150,
-  //   },
-  //   {
-  //     field: 'lastName',
-  //     headerName: 'Last name',
-  //     width: 120,
-  //   },
-  //   {
-  //     field: 'gender',
-  //     headerName: 'Gender',
-  //     width: 100,
-  //   },
-  //   {
-  //     field: 'country',
-  //     headerName: 'Country',
-  //     width: 100,
-  //   },
-  //   {
-  //     field: 'city',
-  //     headerName: 'City',
-  //     width: 100,
-  //   },
-  //   {
-  //     field: 'birthDate',
-  //     headerName: 'Birth date',
-  //     type: 'date',
-  //     width: 100,
-  //     valueGetter: getBirthDate,
-  //   },
-  //   {
-  //     field: '_addressLocation',
-  //     headerName: 'Location',
-  //     width: 160,
-  //     renderCell: renderCellExpand 
-  //   },
-  //   {
-  //     field: 'CNP',
-  //     headerName: 'CNP',
-  //     type: "numeric",
-  //     width: 150,
-  //   },
-  //   {
-  //     field: '_address',
-  //     headerName: 'Address',
-  //     width: 160,
-  //     renderCell: renderCellExpand 
-  //   },
-  // ];
 
   React.useEffect(() => {
     loadWeb3()
-    getPatients()
     loadRequests()
   }, [])
 
@@ -206,7 +84,7 @@ export default function DataGridDemo() {
         const patientsContract = new web3.eth.Contract(Patients.abi, patientsData.address)
         const hospitalContract = new web3.eth.Contract(Hospitals.abi, hospitalData.address)
 
-        const appointments = await appointmentsContract.methods.getAppointmentsOfDoctor(accounts[0]).call();
+        const appointments = await appointmentsContract.methods.getAppointmentsOfPatient(accounts[0]).call();
 
         let appointmentsList = []
 
@@ -215,10 +93,10 @@ export default function DataGridDemo() {
           appointment.id = `event-${i}`
           appointment.label = "Consultation"
 
-          const patient = await patientsContract.methods.getPatient(appointments[i]['patient']).call();
+          const doctor = await hospitalContract.methods.getDoctor(appointments[i]['doctor']).call();
 
-          appointment.user = patient['lastName'] + ' ' + patient['firstName']
-          appointment.groupLabel = patient['lastName'] + ' ' + patient['firstName']
+          appointment.user = doctor['lastName'] + ' ' + doctor['firstName']
+          appointment.groupLabel = doctor['lastName'] + ' ' + doctor['firstName']
           appointment.color = "#f28f6a"
 
           const myArray = appointments[i]['startingHour'].split(":");
@@ -250,42 +128,14 @@ export default function DataGridDemo() {
           appointment.date = dString[2] + "-" + dString[1] + "-" + dString[0]
           appointment.createdAt = new Date()
 
-          let doctor = await hospitalContract.methods.getDoctor(accounts[0]).call()
-          console.log(doctor)
-          appointment.createdBy = doctor['firstName'] + " " + doctor['lastName']
+          let patient = await patientsContract.methods.getPatient(accounts[0]).call()
+          appointment.createdBy = patient['firstName'] + " " + patient['lastName']
 
           appointmentsList.push(appointment)
           console.log(appointment)
         }
         setAppointments(appointmentsList)
     }
-  }
-
-  const getPatients = async () => {
-    const web3 = window.web3
-    const networkId = await web3.eth.net.getId()
-    const networkData = Appointments.networks[networkId]
-    const patientsData = Patients.networks[networkId]
-
-    let patientsList = []
-
-    if(networkData) {
-        const appContract = new web3.eth.Contract(Appointments.abi, networkData.address)
-        const patientsContract = new web3.eth.Contract(Patients.abi, patientsData.address)
-
-        const accounts = await web3.eth.getAccounts()
-        const patients = await appContract.methods.getPatientsOfADoctor(accounts[0]).call();
-        
-        console.log(patients)
-        
-        for (let i = 0; i < patients.length; i++)
-        {
-          const patient = await patientsContract.methods.getPatient(patients[i]).call();
-          console.log(patient)
-          patientsList.push(patient)
-        }
-    }
-    setPatients(patientsList)
   }
 
   const handleCellClick = (event, row, day) => {

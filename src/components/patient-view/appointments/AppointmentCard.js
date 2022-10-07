@@ -24,7 +24,7 @@ export default function AppointmentCard(props) {
 
 
   return (
-    <Card sx={{ minWidth: 250 }} key={props.appointment.doctorProfile}>
+    <Card key={props.appointment.doctorProfile}>
       <CardMedia
           component="img"
           height="150"

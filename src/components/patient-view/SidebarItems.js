@@ -57,18 +57,25 @@ export default function MainListItems(props){
     </ListItemButton>
     <ListItemButton>
       <ListItemIcon>
+        <FontAwesomeIcon icon="fa-solid fa-flask-vial" size="lg"/>
+      </ListItemIcon>
+      <ListItemText primary="Researchers" onClick={() => navigate('/researchers')} />
+    </ListItemButton>
+    
+
+    <Divider />
+    <ListItemButton>
+      <ListItemIcon>
         <FontAwesomeIcon icon="fa-solid fa-calendar-check" size="lg"/>
       </ListItemIcon>
       <ListItemText primary="Appointments" onClick={() => navigate('/appointment-history')}/>
     </ListItemButton>
 
-    <Divider />
-
-    <ListItemButton>
+    <ListItemButton onClick={() => navigate('/calendar')}>
       <ListItemIcon>
-        <FontAwesomeIcon icon="fa-solid fa-flask-vial" size="lg"/>
+        <FontAwesomeIcon icon="fa-solid fa-calendar-days" size='lg' />
       </ListItemIcon>
-      <ListItemText primary="Researchers" onClick={() => navigate('/researchers')} />
+      <ListItemText primary="Calendar" />
     </ListItemButton>
 
     </React.Fragment>

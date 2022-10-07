@@ -217,6 +217,7 @@ export default function DataGridDemo() {
         const filesContract = new web3.eth.Contract(Files.abi, networkData.address)
 
         const historyList = await filesContract.methods.getHistoryAvailableForDoctor(accounts[0]).call();
+        console.log(historyList)
         setHistoriesApproved(historyList)
     }
   }
@@ -228,6 +229,7 @@ export default function DataGridDemo() {
     const patientsData = Patients.networks[networkId]
 
     let patientsList = []
+    let cnpList = []
 
     if(networkData) {
         const appContract = new web3.eth.Contract(Appointments.abi, networkData.address)
@@ -241,8 +243,11 @@ export default function DataGridDemo() {
         for (let i = 0; i < patients.length; i++)
         {
           const patient = await patientsContract.methods.getPatient(patients[i]).call();
-          console.log(patient)
-          patientsList.push(patient)
+          if (!cnpList.includes(patient['CNP'])){
+            console.log(patient)
+            patientsList.push(patient)
+            cnpList.push(patient['CNP'])
+          }
         }
     }
     setPatients(patientsList)

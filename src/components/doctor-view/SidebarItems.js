@@ -47,11 +47,11 @@ export default function MainListItems(props){
       <ListItemText primary="Appoitments" />
     </ListItemButton>
 
-    <ListItemButton onClick={() => navigate('/doctor/requests')}>
+    <ListItemButton onClick={() => navigate('/doctor/calendar')}>
       <ListItemIcon>
-        <FontAwesomeIcon icon="fa-solid fa-envelope" size="lg"/>
+        <FontAwesomeIcon icon="fa-solid fa-calendar-days" size='lg' />
       </ListItemIcon>
-      <ListItemText primary="Pending Requests" />
+      <ListItemText primary="Calendar" />
     </ListItemButton>
     </React.Fragment>
   )

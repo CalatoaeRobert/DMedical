@@ -188,6 +188,7 @@ export default function AppointmentForm(props) {
             <StaticDatePicker
                 orientation="landscape"
                 openTo="day"
+                disablePast
                 value={value}
                 onChange={handleDateChange}
                 renderInput={(params) => <TextField {...params} />}

@@ -25,7 +25,7 @@ export default function PatientCard(props) {
   const navigate = useNavigate();
 
   function getBirthDate(params) {
-    var date = new Date(params.row.birthDate * 1000);
+    var date = new Date(params * 1000);
     var dd = String(date.getDate()).padStart(2, '0');
     var mm = String(date.getMonth() + 1).padStart(2, '0'); 
     var yyyy = date.getFullYear();
@@ -86,7 +86,7 @@ export default function PatientCard(props) {
     }
 
   return (
-    <Card sx={{ minWidth: 200 }} key={props.patient._address}>
+    <Card key={props.patient._address}>
       <CardContent>
         <Typography sx={{ fontSize: 12 }} color="text.secondary" gutterBottom>
           PATIENT NAME
@@ -110,7 +110,7 @@ export default function PatientCard(props) {
           Birth Date
         </Typography>
         <Typography variant="body2">
-          {props.patient.birthDate}
+          {getBirthDate(props.patient.birthDate)}
         </Typography>
         <Typography sx={{mt: 1}} color="text.secondary">
           Address

@@ -18,9 +18,9 @@ contract Registration is Ownable, AccessControl{
     _setupRole(ADMIN_ROLE, 0x5c4E9Fccd53c74A4cE7C9fc14AAc38A81F9aE983);
   }
 
-  function addUser(address _user) public{
-    require(users[_user] == false);
-    users[_user] = true;
+  function addUser(address _address) public{
+    require(users[_address] == false);
+    users[_address] = true;
     userCount++;
   }
 

@@ -138,4 +138,8 @@ contract MedicalResearchers is Ownable{
     function getFilesHistory(address _address) public returns(Files[] memory){
         return historyFiles[_address];
     }
+
+    function getResearchersOfPatient(address _address) public view returns(address[] memory){
+        return researchersOfPatient[_address];
+    }
 }

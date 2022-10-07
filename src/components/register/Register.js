@@ -89,19 +89,19 @@ function Register(props){
 
     const { authenticate, isAuthenticated, user, Moralis, logout} = useMoralis();
 
-    const dispatch = useNotification();
+    // const dispatch = useNotification();
 
-    Moralis.onAccountChanged( async (account) => {
-        dispatch({
-        type: "info",
-        message: "You changed accounts",
-        title: "Account changed",
-        position: "topL"
-        })
-        console.log("changed")
-        logout();
-        navigate('/login')
-    });
+    // Moralis.onAccountChanged( async (account) => {
+    //     dispatch({
+    //     type: "info",
+    //     message: "You changed accounts",
+    //     title: "Account changed",
+    //     position: "topL"
+    //     })
+    //     console.log("changed")
+    //     logout();
+    //     navigate('/login')
+    // });
 
   const handleBirthDateChange = (newValue) => {
     let date = (new Date(newValue)).getTime() / 1000;
@@ -264,19 +264,6 @@ function Register(props){
   
             console.log(response['data'])
   
-            // const file = new Moralis.File("history.json", {
-            //   base64: btoa(unescape(encodeURIComponent(JSON.stringify(response['data'])))),
-            // });
-            // await file.saveIPFS();
-  
-            // console.log(file.ipfs(), file.hash())
-  
-            // Save file reference to Moralis
-            // const ehr = new Moralis.Object("EHRs");
-            // ehr.set("name", fname + " " + lname);
-            // ehr.set("resume", file);
-            // await ehr.save();
-  
             const web3 = window.web3
             const networkId = await web3.eth.net.getId()
             const networkData = Patients.networks[networkId]
@@ -324,9 +311,6 @@ function Register(props){
                     }).on('error', (e) =>{
                       window.alert('Error')
                     })
-                    // await registrationC.methods.addPatient(props.account).send({ from: accounts[0] }).on('transactionHash', (hash) => {
-                    // })
-                    navigate('/home')
                   } catch (error) {
                     if (error.code === 4001) {
                       // EIP-1193 userRejectedRequest error
@@ -335,6 +319,7 @@ function Register(props){
                       console.error(error);
                     }
                   }
+                  navigate("/home")
                 }
           }
         }

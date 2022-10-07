@@ -188,8 +188,8 @@ function Login(props){
         <body style={{backgroundColor: "rgb(6, 96, 58)", overflow: "hidden"}}>
           <div style={{width: "60%", float: "left", padding: "20px", height:'100vh', backgroundColor: "rgb(6, 96, 58)"}}>
             <div style={{color: "rgb(227,241,236)", marginLeft: "20%", marginTop: "24%", fontSize: "50px", fontFamily: "Copperplate"}}>
-            PERSONALIZED
-            HEALTHCARE
+            HEALTH
+            MANAGEMENT
             SYSTEM
             </div>
           </div>

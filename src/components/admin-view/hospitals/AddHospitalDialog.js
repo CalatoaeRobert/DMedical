@@ -130,11 +130,15 @@ export default function FormDialog(props) {
     hospital.set("city", city)
     hospital.set("country", country)
     hospital.set("zip", parseInt(zip))
-    hospital.set("LAT", parseInt(lat))
-    hospital.set("LON", parseInt(lon))
-    hospital.save()
+    hospital.set("LAT", parseFloat(lat))
+    hospital.set("LON", parseFloat(lon))
+    hospital.save().then(() => {
+      window.confirm("You added a new hospital")
+    })
 
     setOpen(false);
+
+    
   };
 
   const getCountries = async () => {
@@ -203,8 +207,7 @@ export default function FormDialog(props) {
             </MenuItem>
             ))}
             </TextField>
-            <TextField id="outlined-basic" label="Name" variant="outlined" id="name" value={name} error={name === ""}
-        helperText={name === "" ? "Empty!" : " "}
+            <TextField id="outlined-basic" label="Name" variant="outlined" id="name" value={name}
             onChange={handleNameChange}/>
             <TextField id="outlined-basic" label="ZIP" variant="outlined" id="zip" value={zip}
             onChange={handleZipChange}/>

@@ -24,7 +24,7 @@ export default function AppointmentCard(props) {
 
 
   return (
-    <Card sx={{ minWidth: 200 }} key={props.appointment.doctorProfile}>
+    <Card key={props.appointment.doctorProfile}>
       <CardContent>
         <Typography sx={{ fontSize: 12 }} color="text.secondary" gutterBottom>
           PATIENT NAME

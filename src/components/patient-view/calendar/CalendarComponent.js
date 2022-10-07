@@ -1,5 +1,5 @@
 import * as React from 'react';
-import InvitationsTable from './InvitationsTable';
+import Calendar from './Calendar';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -91,7 +91,7 @@ const mdTheme = createTheme({
       },
 });
 
-export default function InvitationsComponent(props){
+export default function CalendarComponent(props){
     const [open, setOpen] = React.useState(true);
     const toggleDrawer = () => {
       setOpen(!open);
@@ -167,7 +167,7 @@ export default function InvitationsComponent(props){
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                        <InvitationsTable />
+                        <Calendar />
                     </Paper>
               </Grid>
             </Grid>

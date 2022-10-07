@@ -312,10 +312,11 @@ export default function ControlledAccordions(props) {
   };
 
   const getCareplanTimelines = () => {
-    let careplansString = ""
-    let reasons = ""
-    let activities = ""
+    
     return careplans.map((careplan, i) => {
+      let careplansString = ""
+      let reasons = ""
+      let activities = ""
       const color = i % 2 === 0 ? "success" : "secondary";
       console.log(careplan)
       for (let i = 0; i < careplan['codes'].length; i++){
@@ -363,9 +364,9 @@ export default function ControlledAccordions(props) {
   };
 
   const getInjuriesTimeline = () => {
-    let injuriesString = ""
-
+    
     return injuries.map((injury, i) => {
+      let injuriesString = ""
       const color = i % 2 === 0 ? "success" : "secondary";
       for (let i = 0; i < injury['codes'].length; i++){
         if (i === 0){
@@ -395,10 +396,11 @@ export default function ControlledAccordions(props) {
   };
 
   const getMedicationTimeline = () => {
-    let medicationString = ""
-    let reasons = ""
-    let stopReasons = ""
+    
     return medications.map((medication, i) => {
+      let medicationString = ""
+      let reasons = ""
+      let stopReasons = ""
       const color = i % 2 === 0 ? "success" : "secondary";
       console.log(medication)
       for (let i = 0; i < medication['codes'].length; i++){
@@ -440,9 +442,6 @@ export default function ControlledAccordions(props) {
   };
 
   const getTestsTimeline = () => {
-    let medicationString = ""
-    let reasons = ""
-    let stopReasons = ""
     return tests.map((test, i) => {
       const color = i % 2 === 0 ? "success" : "secondary";
       console.log(test)
@@ -456,8 +455,11 @@ export default function ControlledAccordions(props) {
             <TimelineContent>
               <Paper>
               <Typography>Date: {getDate(test[0]['date'])}</Typography>
-                {test.map((singleTest, j) => {
+              {test.map((singleTest, j) => {
+                  if (!Array.isArray(singleTest) && (typeof(singleTest['name']) != 'object') && (typeof(singleTest['value']) !== 'object') && (typeof(singleTest['unit']) != 'object')){
+                    console.log(singleTest['value'])
                   return(<Typography sx={{mt: "10px"}}>{singleTest['name']}: value = {singleTest['value']}{singleTest['unit']}</Typography>);
+                  }
                 })}
               </Paper>
             </TimelineContent>

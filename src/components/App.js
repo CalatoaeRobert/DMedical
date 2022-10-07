@@ -5,7 +5,7 @@ import Patients from '../abis/Files.json'
 import Registration from '../abis/Registration.json'
 
 import React, { Component } from 'react';
-import Navbar from './Navbar'
+// import Navbar from './Navbar'
 import Main from './Main'
 import Login from './Login';
 import Web3 from 'web3';
@@ -34,6 +34,7 @@ import PatientResearchers from './patient-view/researchers/PatientResearchers'
 import PatientsOfResearchersComponent from './researcher-view/patient-history/PatientsOfResearchers';
 import HistoryResearcher from './researcher-view/history-view/HistoryResearcher';
 import InvitationsComponent from './doctor-view/invitations/InvitationsComponent';
+import CalendarComponent from './patient-view/calendar/CalendarComponent'
 
 import Private from './Private'
 
@@ -44,7 +45,7 @@ import { useNavigate } from "react-router-dom";
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
 import { faUser, faNotesMedical, faUserDoctor, faHandshakeAngle, faCalendarCheck, 
-  faFlaskVial, faHospitalUser, faEnvelope, faHospital } from '@fortawesome/free-solid-svg-icons'
+  faFlaskVial, faHospitalUser, faEnvelope, faHospital, faCalendarDays } from '@fortawesome/free-solid-svg-icons'
 import { faTwitter, faFontAwesome } from '@fortawesome/free-brands-svg-icons'
 
 import { useMoralis } from "react-moralis";
@@ -58,6 +59,7 @@ library.add(fas, faFlaskVial)
 library.add(fas, faHospitalUser)
 library.add(fas, faEnvelope)
 library.add(fas, faHospital)
+library.add(fas, faCalendarDays)
 
 const ipfsClient = require('ipfs-http-client')
 const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' }) // leaving out the arguments will default to these values
@@ -81,17 +83,7 @@ function App(){
 
   const { authenticate, isAuthenticated, user, Moralis, logout} = useMoralis();
   const navigate = useNavigate();
-  Moralis.onAccountChanged( async (account) => {
-      // dispatch({
-      // type: "info",
-      // message: "You changed accounts",
-      // title: "Account changed",
-      // position: "topL"
-      // })
-      console.log("changed")
-      logout();
-      navigate('/login')
-  });
+  
 
   const [doctor, setDoctor] = useState({address: "12", age: 10, doctorName: "nume", specialization: "sp"});
   const age = doctor.age;
@@ -102,43 +94,20 @@ function App(){
   useEffect(() => {
     loadWeb3()
     loadAccount()
-    loadIsRegistered()
+    //loadIsRegistered()
     //  addHospitals()
 }, []);
 
-  // useEffect(() => {
-  //   localStorage.setItem('isPatient', isPatient);
-  // }, [isPatient])
-
-  // useEffect(() => {
-  //   localStorage.setItem('isDoctor', isDoctor);
-  // }, [isDoctor])
-
-  // useEffect(() => {
-  //   localStorage.setItem('isResearcher', isResearcher);
-  // }, [isResearcher])
-
-  // useEffect(() => {
-  //   localStorage.setItem('isAdmin', isAdmin);
-  // }, [isAdmin])
-
-  // useEffect(() => {
-  //     localStorage.setItem('isPatient', isPatient);
-  //     localStorage.setItem('isDoctor', isDoctor);
-  //     localStorage.setItem('isResearcher', isResearcher);
-  //     localStorage.setItem('isAdmin', isAdmin);
-  // }, [isPatient, isDoctor, isResearcher, isAdmin])
-
-// useEffect(() => {
-//   window.process = {
-//     ...window.process,
-//   };
-// }, []);
+  useEffect(() => {
+    loadIsRegistered()
+  }, [account]);
 
   const loadAccount = async () => {
     const web3 = window.web3
     const accounts = await web3.eth.getAccounts()
-    setAccount(accounts[0])
+    if (accounts.length > 0){
+      setAccount(accounts[0])
+    }
   }
 
   const loadWeb3 = async () => {
@@ -304,54 +273,56 @@ function App(){
 
     const networkId = await web3.eth.net.getId()
     const networkData = Registration.networks[networkId]
-    if(networkData) {
-      const registrationContract = new web3.eth.Contract(Registration.abi, networkData.address)
-
-      const isRegistered = await registrationContract.methods.userExists(accounts[0]).call()
-      setIsRegistered(isRegistered)
-      
-      const role = await registrationContract.methods.getRole(accounts[0]).call()
-      console.log(role)
-      if (role == "PATIENT"){
-        localStorage.setItem('isPatient', true);
-        localStorage.setItem('isDoctor', false);
-        localStorage.setItem('isAdmin', false);
-        localStorage.setItem('isResearcher', false);
-        // setIsDoctor(false)
-        // setIsAdmin(false)
-        // setIsResearcher(false)
+    if (accounts.length > 0){
+      if(networkData) {
+        const registrationContract = new web3.eth.Contract(Registration.abi, networkData.address)
+  
+        const isRegistered = await registrationContract.methods.userExists(accounts[0]).call()
+        setIsRegistered(isRegistered)
+        
+        const role = await registrationContract.methods.getRole(accounts[0]).call()
+        console.log(role)
+        if (role == "PATIENT"){
+          localStorage.setItem('isPatient', true);
+          localStorage.setItem('isDoctor', false);
+          localStorage.setItem('isAdmin', false);
+          localStorage.setItem('isResearcher', false);
+          // setIsDoctor(false)
+          // setIsAdmin(false)
+          // setIsResearcher(false)
+        }
+        else if(role == "DOCTOR"){
+          localStorage.setItem('isPatient', false);
+          localStorage.setItem('isDoctor', true);
+          localStorage.setItem('isAdmin', false);
+          localStorage.setItem('isResearcher', false);
+          // setIsDoctor(true)
+          // setIsAdmin(false)
+          // setIsResearcher(false)
+          // setIsPatient(false)
+        }
+        else if(role == "ADMIN"){
+          // setIsAdmin(true)
+          // setIsResearcher(false)
+          // setIsPatient(false)
+          // setIsDoctor(false)
+          localStorage.setItem('isPatient', false);
+          localStorage.setItem('isDoctor', false);
+          localStorage.setItem('isAdmin', true);
+          localStorage.setItem('isResearcher', false);
+        }
+        else if(role == "RESEARCHER"){
+          // setIsResearcher(true)
+          // setIsPatient(false)
+          // setIsDoctor(false)
+          // setIsAdmin(false)
+          localStorage.setItem('isPatient', false);
+          localStorage.setItem('isDoctor', false);
+          localStorage.setItem('isAdmin', false);
+          localStorage.setItem('isResearcher', true);
+        }
+        
       }
-      else if(role == "DOCTOR"){
-        localStorage.setItem('isPatient', false);
-        localStorage.setItem('isDoctor', true);
-        localStorage.setItem('isAdmin', false);
-        localStorage.setItem('isResearcher', false);
-        // setIsDoctor(true)
-        // setIsAdmin(false)
-        // setIsResearcher(false)
-        // setIsPatient(false)
-      }
-      else if(role == "ADMIN"){
-        // setIsAdmin(true)
-        // setIsResearcher(false)
-        // setIsPatient(false)
-        // setIsDoctor(false)
-        localStorage.setItem('isPatient', false);
-        localStorage.setItem('isDoctor', false);
-        localStorage.setItem('isAdmin', true);
-        localStorage.setItem('isResearcher', false);
-      }
-      else if(role == "RESEARCHER"){
-        // setIsResearcher(true)
-        // setIsPatient(false)
-        // setIsDoctor(false)
-        // setIsAdmin(false)
-        localStorage.setItem('isPatient', false);
-        localStorage.setItem('isDoctor', false);
-        localStorage.setItem('isAdmin', false);
-        localStorage.setItem('isResearcher', true);
-      }
-      
     }
   }
 
@@ -447,9 +418,14 @@ function App(){
                   <HistoryResearcher account={account}/>
                 </Private>
             } />
-            <Route path='/doctor/requests' element={
+            <Route path='/doctor/calendar' element={
                   <Private isCorrectRole={'isDoctor'}>
                   <InvitationsComponent account={account}/>
+                </Private>
+            } />
+            <Route path='/calendar' element={
+                  <Private isCorrectRole={'isPatient'}>
+                  <CalendarComponent account={account}/>
                 </Private>
             } />
           </Routes>
